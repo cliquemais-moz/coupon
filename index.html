@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
  It does not collect, validate, transmit, or access real bank credentials.
 */
 
-const LOGO_URL = "https://kommodo.ai/i/XInZCXa56E1bTMfkexSh";
+const LOGO_URL = "./logo.png";
 
 const VIDEO_EMBED_URL=""; // Put your own TEST video embed URL here.
 
@@ -168,10 +168,18 @@ function startDraw(n){
     render()
    },2000)
   }
- }, 5000); // Alterado para 5000ms (5 segundos)
+ }, 5000);
 }
 
-function startProcessing(){state.step="processing";state.processingIndex=0;render();setTimeout(()=>{state.processingIndex=1;render()},800);setTimeout(()=>{state.processingIndex=2;render()},1600);setTimeout(()=>{state.processingIndex=3;render()},2400);setTimeout(()=>{state.step=5;render()},3000)}
+function startProcessing(){
+ state.step="processing";
+ state.processingIndex=0;
+ render();
+ setTimeout(()=>{state.processingIndex=1;render()}, 4000);
+ setTimeout(()=>{state.processingIndex=2;render()}, 8000);
+ setTimeout(()=>{state.processingIndex=3;render()}, 10500);
+ setTimeout(()=>{state.step=5;render()}, 12000);
+}
 
 function bind(){
 const f=document.getElementById("startForm");
