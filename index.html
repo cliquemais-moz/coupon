@@ -163,12 +163,10 @@ function startDraw(n){
  let currentStep = 0;
  let interval = setInterval(() => {
   if (currentStep < 5) {
-   // Generates random numbers while running, but on the 2nd attempt or final win it ensures the user's number is last if it's a win
    let randNum = Math.floor(1 + Math.random() * 49);
    if (currentStep === 4 && state.attempt === 1) {
      state.drawNumbers[currentStep] = state.luckyNumber;
    } else if (currentStep === 4 && state.attempt === 0) {
-     // First attempt always fails (doesn't match lucky number)
      let failNum;
      do {
        failNum = Math.floor(1 + Math.random() * 49);
@@ -187,12 +185,11 @@ function startDraw(n){
     render();
    } else {
     state.draw = "win";
-    // Ensure the last bubble matches the user's lucky number on win
     state.drawNumbers[4] = state.luckyNumber;
     render();
    }
   }
- }, 1000); // changes numbers sequentially every 1 second (total 5 seconds)
+ }, 1000);
 }
 
 function startProcessing(){
