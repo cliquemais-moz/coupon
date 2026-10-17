@@ -31,11 +31,11 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}
 </style>
 </head>
 <body>
+
 <!-- Modal de Verificação de Idade -->
 <div id="age-verification-modal" style="display: none; position: fixed; inset: 0; z-index: 99999; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); align-items: center; justify-content: center; padding: 20px;">
   <div style="background-color: #ffffff; border-radius: 16px; padding: 32px 24px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);">
     
-    <!-- Ícone ou Título -->
     <div style="font-size: 40px; margin-bottom: 12px;">🔞</div>
     <h2 style="font-size: 20px; font-weight: 900; color: #111827; margin: 0 0 8px 0; text-transform: uppercase;">Age Verification</h2>
     
@@ -43,7 +43,6 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}
       You must be at least 18 years old to access this site. Please confirm your age to continue.
     </p>
 
-    <!-- Botões -->
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <button id="btn-age-yes" style="width: 100%; background-color: #facc15; color: #030712; border: none; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 900; cursor: pointer; transition: background-color 0.2s;">
         I AM 18 OR OLDER
@@ -56,43 +55,42 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}
 
   </div>
 </div>
+
 <div id="app"></div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
- const ageModal = document.getElementById("age-verification-modal");
- const btnYes = document.getElementById("btn-age-yes");
- const btnNo = document.getElementById("btn-age-no");
+  const ageModal = document.getElementById("age-verification-modal");
+  const btnYes = document.getElementById("btn-age-yes");
+  const btnNo = document.getElementById("btn-age-no");
 
- // 1. Verifica se o utilizador já confirmou a idade anteriormente
- const isAgeVerified = localStorage.getItem("isAgeVerified");
+  // 1. Verifica se o utilizador já confirmou a idade anteriormente
+  const isAgeVerified = localStorage.getItem("isAgeVerified");
 
- if (!isAgeVerified) {
-   // Se não confirmou, mostra o pop-up e bloqueia o scroll da página
-   ageModal.style.display = "flex";
-   document.body.style.overflow = "hidden";
- }
+  if (!isAgeVerified) {
+    // Se não confirmou, mostra o pop-up e bloqueia o scroll da página
+    ageModal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  }
 
- // 2. Ação ao clicar em "Sim (Tenho 18+)"
- btnYes.addEventListener("click", function() {
-   // Salva a resposta no navegador para não perguntar novamente
-   localStorage.setItem("isAgeVerified", "true");
-   
-   // Esconde o pop-up e liberta o scroll
-   ageModal.style.display = "none";
-   document.body.style.overflow = "auto";
- });
+  // 2. Ação ao clicar em "Sim (Tenho 18+)"
+  btnYes.addEventListener("click", function() {
+    localStorage.setItem("isAgeVerified", "true");
+    ageModal.style.display = "none";
+    document.body.style.overflow = "auto";
+  });
 
- // 3. Ação ao clicar em "Não (Menor de 18)"
- btnNo.addEventListener("click", function() {
-   alert("You must be 18 or older to access this website.");
-   // Redireciona o utilizador para fora do site (ex: Google)
-   window.location.href = "https://www.google.com";
- });
+  // 3. Ação ao clicar em "Não (Menor de 18)"
+  btnNo.addEventListener("click", function() {
+    alert("You must be 18 or older to access this website.");
+    window.location.href = "https://www.google.com";
+  });
 });
+
 /*
- COUPONWIN — UI STUDY / PROTOTYPE
- This is a non-transactional prototype.
- It does not collect, validate, transmit, or access real bank credentials.
+  COUPONWIN — UI STUDY / PROTOTYPE
+  This is a non-transactional prototype.
+  It does not collect, validate, transmit, or access real bank credentials.
 */
 
 const LOGO_URL = "./logo.png";
@@ -101,14 +99,14 @@ const VIDEO_EMBED_URL=""; // Put your own TEST video embed URL here.
 
 const banks=["ABSA","Standard Bank","FNB","Nedbank","Capitec","Investec","African Bank","TymeBank","Discovery Bank","Bidvest Bank"];
 const prizes={
- "First Prize":"R 15.000",
- "Second Prize":"R 11.250",
- "Third Prize":"R 7.500",
- "Fourth Prize":"R 3.750"
+  "First Prize":"R 15.000",
+  "Second Prize":"R 11.250",
+  "Third Prize":"R 7.500",
+  "Fourth Prize":"R 3.750"
 };
 const state={
- step:1,name:"",phone:"",prize:"First Prize",amount:"R 15.000",
- luckyNumber:null,attempt:0,draw:null,bank:"",demoId:"",processingIndex:0,video:false
+  step:1,name:"",phone:"",prize:"First Prize",amount:"R 15.000",
+  luckyNumber:null,attempt:0,draw:null,bank:"",demoId:"",processingIndex:0,video:false
 };
 
 function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
