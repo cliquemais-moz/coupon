@@ -39,7 +39,6 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}
 <div id="age-verification-modal" style="display: none; position: fixed; inset: 0; z-index: 99999; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); align-items: center; justify-content: center; padding: 20px;">
   <div style="background-color: #ffffff; border-radius: 16px; padding: 32px 24px; max-width: 400px; width: 100%; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);">
     
-    <!-- Ícone ou Título -->
     <div style="font-size: 40px; margin-bottom: 12px;">🔞</div>
     <h2 style="font-size: 20px; font-weight: 900; color: #111827; margin: 0 0 8px 0; text-transform: uppercase;">Age Verification</h2>
     
@@ -47,7 +46,6 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:transparent}
       You must be at least 18 years old to access this site. Please confirm your age to continue.
     </p>
 
-    <!-- Botões -->
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <button id="btn-age-yes" style="width: 100%; background-color: #facc15; color: #030712; border: none; border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 900; cursor: pointer; transition: background-color 0.2s;">
         I AM 18 OR OLDER
@@ -67,41 +65,27 @@ document.addEventListener("DOMContentLoaded", function() {
  const btnYes = document.getElementById("btn-age-yes");
  const btnNo = document.getElementById("btn-age-no");
 
- // 1. Verifica se o utilizador já confirmou a idade anteriormente
  const isAgeVerified = localStorage.getItem("isAgeVerified");
 
  if (!isAgeVerified) {
-   // Se não confirmou, mostra o pop-up e bloqueia o scroll da página
    ageModal.style.display = "flex";
    document.body.style.overflow = "hidden";
  }
 
- // 2. Ação ao clicar em "Sim (Tenho 18+)"
  btnYes.addEventListener("click", function() {
-   // Salva a resposta no navegador para não perguntar novamente
    localStorage.setItem("isAgeVerified", "true");
-   
-   // Esconde o pop-up e liberta o scroll
    ageModal.style.display = "none";
    document.body.style.overflow = "auto";
  });
 
- // 3. Ação ao clicar em "Não (Menor de 18)"
  btnNo.addEventListener("click", function() {
    alert("You must be 18 or older to access this website.");
-   // Redireciona o utilizador para fora do site (ex: Google)
    window.location.href = "https://www.google.com";
  });
 });
-/*
- COUPONWIN — Lotto / PROTOTYPE
- This is a non-transactional prototype.
- It does not collect, validate, transmit, or access real bank credentials.
-*/
 
 const LOGO_URL = "./logo.png";
-
-const VIDEO_EMBED_URL=""; // Put your own TEST video embed URL here.
+const VIDEO_EMBED_URL="";
 
 const banks=["ABSA","Standard Bank","FNB","Nedbank","Capitec","Investec","African Bank","TymeBank","Discovery Bank","Bidvest Bank"];
 const prizes={
@@ -112,7 +96,9 @@ const prizes={
 };
 const state={
  step:1,name:"",phone:"",prize:"First Prize",amount:"R 15.000",
- luckyNumber:null,attempt:0,draw:null,bank:"",demoId:"",processingIndex:0,video:false
+ luckyNumber:null,attempt:0,draw:null,bank:"",demoId:"",processingIndex:0,video:false,
+ drawNumbers:["?", "?", "?", "?", "?"],
+ drawId:"#2055"
 };
 
 function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
@@ -125,10 +111,25 @@ function step1(){return `<section class="up"><div class="mb-7"><span class="inli
 
 function step2(){
 let status="";
-if(state.draw==="running")status=`<div class="mb-5 rounded-2xl bg-gray-950 p-5 text-center text-white"><div class="text-[10px] font-black uppercase tracking-[.2em] text-yellow-400">LIVE DRAW</div><div class="mt-4 flex justify-center gap-2">${[1,2,3,4,5].map((_,i)=>`<div class="flex h-10 w-10 animate-pulse items-center justify-center rounded-full bg-yellow-400 text-xs font-black text-gray-950" style="animation-delay:${i*120}ms">?</div>`).join("")}</div><p class="mt-4 text-xs text-gray-400">Drawing numbers...</p></div>`;
+let subText = state.draw === "running" ? `🎲 Drawing the official lottery numbers...` : state.draw === "fail" ? `Draw completed — no match.` : state.draw === "win" ? `Draw completed!` : `Pick your lucky number for the official draw.`;
+
 if(state.draw==="fail")status=`<div class="mb-5 rounded-2xl border border-yellow-200 bg-yellow-50 p-5"><div class="text-sm font-black text-gray-950">Draw completed — no match.</div><p class="mt-2 text-sm leading-6 text-gray-700"><strong>SO CLOSE!</strong> Your number ${state.luckyNumber} was not drawn this time. You have 1 free attempt left — try again!</p><button id="tryAgain" class="mt-4 rounded-lg bg-yellow-400 px-5 py-3 text-xs font-black text-gray-950">TRY AGAIN</button></div>`;
-if(state.draw==="win")status=`<div class="mb-5 rounded-2xl border border-green-200 bg-green-50 p-5"><div class="text-sm font-black text-green-700">✓ Your number ${state.luckyNumber} was drawn.</div><p class="mt-2 text-sm leading-6 text-green-700"><strong>CONGRATULATIONS!</strong> Result confirmed. Continuing automatically...</p></div>`;
-return `<section class="fade"><div class="mb-6"><span class="text-[10px] font-black uppercase tracking-[.18em] text-yellow-600">STEP 2 OF 5 · LIVE DRAW</span><h2 class="mt-3 text-2xl font-black text-gray-950">Hello, ${esc(state.name)}</h2><p class="mt-2 text-sm text-gray-500">You are competing for ${esc(state.prize)}: ${esc(state.amount)}</p><p class="mt-4 text-sm font-semibold text-gray-700">Pick your lucky number to start the draw.</p></div>${status}<div class="grid grid-cols-5 gap-2 sm:gap-2.5 max-w-sm mx-auto">${Array.from({length:10},(_,i)=>{let n=i+1;return `<button data-number="${n}" ${state.draw==="running"||state.draw==="win"?"disabled":""} class="flex h-12 w-full sm:h-13 items-center justify-center rounded-xl border text-base sm:text-lg font-black transition ${state.luckyNumber===n?"border-yellow-400 bg-yellow-50":"border-gray-200 bg-white hover:border-yellow-400 hover:bg-yellow-50"}">${n}</button>`}).join("")}</div><div class="mt-6 rounded-xl bg-gray-50 p-4 text-center text-xs text-gray-500">Attempt ${Math.min(state.attempt+1,2)} of 2</div></section>`}
+if(state.draw==="win")status=`<div class="mb-5 rounded-2xl border border-green-200 bg-green-50 p-5"><div class="text-sm font-black text-green-700">✓ Your number ${state.luckyNumber} was drawn.</div><p class="mt-2 text-sm leading-6 text-green-700"><strong>CONGRATULATIONS!</strong> Your number ${state.luckyNumber} was drawn! You won the Prize Won <strong>${esc(state.amount)}</strong>.</p><button id='claimPrize' class='mt-4 w-full rounded-xl bg-green-600 py-3 text-xs font-black text-white hover:bg-green-700'>CLAIM MY PRIZE →</button></div>`;
+
+return `<section class="fade"><div class="mb-6"><span class="text-[10px] font-black uppercase tracking-[.18em] text-yellow-600">STEP 2 OF 5 · LIVE DRAW</span><h2 class="mt-3 text-2xl font-black text-gray-950">Hello, ${esc(state.name)}</h2><p class="mt-2 text-sm text-gray-500">You are competing for ${esc(state.prize)}: ${esc(state.amount)}</p><p class="mt-4 text-sm font-semibold text-gray-700">${subText}</p></div>
+
+<div class="mb-5 rounded-2xl bg-indigo-950 p-5 text-center text-white shadow-lg">
+  <div class="flex items-center justify-between mb-4 text-xs font-bold text-gray-300">
+    <div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-red-500 animate-ping"></span><span class="tracking-wider uppercase text-white font-black">LIVE DRAW</span></div>
+    <span class="text-gray-400">${state.drawId}</span>
+  </div>
+  <div class="flex justify-center gap-2 sm:gap-3">
+    ${state.drawNumbers.map(num => `<div class="flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-amber-500 text-sm sm:text-base font-black text-gray-950 shadow-inner">${num}</div>`).join("")}
+  </div>
+  <div class="mt-4 text-xs font-bold text-gray-300">Your number: <span class="text-amber-400 font-black">${state.luckyNumber !== null ? state.luckyNumber : '—'}</span></div>
+</div>
+
+${status}<div class="grid grid-cols-5 gap-2 sm:gap-2.5 max-w-sm mx-auto">${Array.from({length:10},(_,i)=>{let n=i+1;return `<button data-number="${n}" ${state.draw==="running"||state.draw==="win"?"disabled":""} class="flex h-12 w-full sm:h-13 items-center justify-center rounded-xl border text-base sm:text-lg font-black transition ${state.luckyNumber===n?"border-yellow-400 bg-yellow-50":"border-gray-200 bg-white hover:border-yellow-400 hover:bg-yellow-50"}">${n}</button>`}).join("")}</div><div class="mt-6 rounded-xl bg-gray-50 p-4 text-center text-xs text-gray-500">Attempt ${Math.min(state.attempt+1,2)} of 2</div></section>`}
 
 function step3(){return `<section class="fade"><div class="mb-6"><span class="text-[10px] font-black uppercase tracking-[.18em] text-yellow-600">STEP 3 OF 5 · SELECT YOUR BANK</span><h2 class="mt-3 text-2xl font-black text-gray-950">Select your bank</h2><p class="mt-2 text-sm leading-6 text-gray-500">This prototype records only the selected bank brand.</p></div><div class="grid grid-cols-2 gap-3">${banks.map(b=>`<button data-bank="${b}" class="rounded-2xl border border-gray-200 bg-white p-4 text-left hover:border-yellow-400 hover:bg-yellow-50"><div class="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-yellow-400 text-xs font-black text-gray-950">$</div><div class="text-sm font-black text-gray-800">${b}</div></button>`).join("")}</div></section>`}
 
@@ -136,7 +137,7 @@ function step4(){return `<section class="fade"><div class="mb-7"><span class="te
 
 function processing(){let items=["Validating account data...","Connecting with the bank...","Confirming account holder..."];return `<section class="py-8 text-center fade"><div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-yellow-50"><div class="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-yellow-400"></div></div><h2 class="text-2xl font-black text-gray-950">Verifying your account</h2><p class="mt-2 text-sm text-gray-500">${esc(state.bank)}</p><div class="mt-8 space-y-3 text-left">${items.map((x,i)=>{let done=state.processingIndex>i;return `<div class="flex items-center gap-3 rounded-xl border p-4 ${done?"border-green-100 bg-green-50":"border-gray-100 bg-gray-50"}"><div class="flex h-7 w-7 items-center justify-center rounded-full ${done?"bg-green-500 text-white":"bg-white text-gray-400"} text-xs font-black">${done?"✓":i+1}</div><span class="text-sm font-semibold ${done?"text-green-700":"text-gray-500"}">${x}</span>${state.processingIndex===i&&!done?'<span class="ml-auto h-4 w-4 animate-spin rounded-full border-2 border-gray-200 border-t-yellow-400"></span>':""}</div>`}).join("")}</div></section>`}
 
-function step5(){return `<section class="fade"><div class="overflow-hidden rounded-2xl border border-green-200"><div class="bg-green-600 px-5 py-4 text-center text-sm font-black text-white">✓ BANK APPROVED!</div><div class="p-5"><div class="flex items-center gap-3"><div class="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400 font-black text-gray-950">$</div><div><div class="text-[10px] font-black uppercase tracking-wider text-gray-400">VERIFIED</div><div class="text-lg font-black text-gray-950">${esc(state.bank)}</div></div></div><div class="mt-5"><span class="text-[10px] font-black uppercase tracking-[.18em] text-yellow-600">STEP 5 OF 5</span><h2 class="mt-3 text-xl font-black text-gray-950">Your account has been verified, ${esc(state.name)}.</h2></div></div></div><div class="mt-5 rounded-2xl bg-yellow-50 p-5"><div class="text-base font-black text-gray-950">ONE LAST STEP TO VIEW YOUR RESULT</div><p class="mt-2 text-sm leading-6 text-gray-700">Continue to the video page to watch.</p></div><button id="watch" class="mt-6 w-full rounded-xl bg-green-600 py-4 text-sm font-black text-white shadow-lg shadow-green-100 hover:bg-green-700">► WATCH VIDEO</button></section>`}
+function step5(){return `<section class="fade"><div class="overflow-hidden rounded-2xl border border-green-200"><div class="bg-green-600 px-5 py-4 text-center text-sm font-black text-white">✓ BANK APPROVED!</div><div class="p-5"><div class="flex items-center gap-3"><img src="${esc(LOGO_URL)}" alt="CouponWin Logo" class="h-12 w-12 rounded-full object-cover"><div><div class="text-[10px] font-black uppercase tracking-wider text-gray-400">VERIFIED</div><div class="text-lg font-black text-gray-950">${esc(state.bank)}</div></div></div><div class="mt-5"><span class="text-[10px] font-black uppercase tracking-[.18em] text-yellow-600">STEP 5 OF 5</span><h2 class="mt-3 text-xl font-black text-gray-950">Your account has been verified, ${esc(state.name)}.</h2></div></div></div><div class="mt-5 rounded-2xl bg-yellow-50 p-5"><div class="text-base font-black text-gray-950">ONE LAST STEP TO VIEW YOUR RESULT</div><p class="mt-2 text-sm leading-6 text-gray-700">Continue to the video page to watch.</p></div><button id="watch" class="mt-6 w-full rounded-xl bg-green-600 py-4 text-sm font-black text-white shadow-lg shadow-green-100 hover:bg-green-700">► WATCH VIDEO</button></section>`}
 
 function loadVturbScript(){
  if(!document.getElementById("vturb-script")){
@@ -153,26 +154,45 @@ function videoPage(){
 }
 
 function startDraw(n){
- state.luckyNumber=n;
- state.draw="running";
+ state.luckyNumber = n;
+ state.draw = "running";
+ state.drawId = "#" + Math.floor(1000 + Math.random() * 9000);
+ state.drawNumbers = ["?", "?", "?", "?", "?"];
  render();
- setTimeout(()=>{
-  if(state.attempt===0){
-   state.attempt=1;
-   state.draw="fail";
-   render()
-  }else{
-   state.draw="win";
+
+ let currentStep = 0;
+ let interval = setInterval(() => {
+  if (currentStep < 5) {
+   // Generates random numbers while running, but on the 2nd attempt or final win it ensures the user's number is last if it's a win
+   let randNum = Math.floor(1 + Math.random() * 49);
+   if (currentStep === 4 && state.attempt === 1) {
+     state.drawNumbers[currentStep] = state.luckyNumber;
+   } else if (currentStep === 4 && state.attempt === 0) {
+     // First attempt always fails (doesn't match lucky number)
+     let failNum;
+     do {
+       failNum = Math.floor(1 + Math.random() * 49);
+     } while (failNum === state.luckyNumber);
+     state.drawNumbers[currentStep] = failNum;
+   } else {
+     state.drawNumbers[currentStep] = randNum;
+   }
+   currentStep++;
    render();
-   setTimeout(()=>{
-    state.step=3;
-    state.draw=null;
-    state.luckyNumber=null;
-    state.attempt=0;
-    render()
-   },2000)
+  } else {
+   clearInterval(interval);
+   if(state.attempt === 0){
+    state.attempt = 1;
+    state.draw = "fail";
+    render();
+   } else {
+    state.draw = "win";
+    // Ensure the last bubble matches the user's lucky number on win
+    state.drawNumbers[4] = state.luckyNumber;
+    render();
+   }
   }
- }, 5000);
+ }, 1000); // changes numbers sequentially every 1 second (total 5 seconds)
 }
 
 function startProcessing(){
@@ -189,7 +209,8 @@ function bind(){
 const f=document.getElementById("startForm");
 if(f)f.addEventListener("submit",e=>{e.preventDefault();state.name=document.getElementById("name").value.trim();state.phone=document.getElementById("phone").value.trim();let r=document.querySelector('input[name="prize"]:checked');if(r){state.prize=r.value;state.amount=prizes[state.prize]}if(state.name&&state.phone){state.step=2;render()}});
 document.querySelectorAll("[data-number]").forEach(b=>b.addEventListener("click",()=>startDraw(Number(b.dataset.number))));
-const retry=document.getElementById("tryAgain");if(retry)retry.addEventListener("click",()=>{state.draw=null;state.luckyNumber=null;render()});
+const retry=document.getElementById("tryAgain");if(retry)retry.addEventListener("click",()=>{state.draw=null;state.luckyNumber=null;state.drawNumbers=["?","?","?","?","?"];render()});
+const claim=document.getElementById("claimPrize");if(claim)claim.addEventListener("click",()=>{state.video=true;render();window.scrollTo({top:0,behavior:"smooth"})});
 document.querySelectorAll("[data-bank]").forEach(b=>b.addEventListener("click",()=>{state.bank=b.dataset.bank;state.step=4;render()}));
 const a=document.getElementById("accountForm");if(a)a.addEventListener("submit",e=>{e.preventDefault();state.demoId=document.getElementById("demoId").value.trim();if(state.demoId)startProcessing()});
 const w=document.getElementById("watch");if(w)w.addEventListener("click",()=>{state.video=true;render();window.scrollTo({top:0,behavior:"smooth"})});
